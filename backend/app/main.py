@@ -15,6 +15,7 @@ app_settings = get_settings()
 origins = [
     origin.strip()
     for origin in app_settings.cors_origins.split(",")
+    if origin.strip()
 ]
 
 
