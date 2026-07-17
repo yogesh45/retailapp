@@ -43,7 +43,10 @@ class UploadService:
         upload_directory = Path(
             app_settings.upload_directory
         )
-        upload_directory.mkdir(exist_ok=True)
+        upload_directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
         # Generate unique filename
         file_extension = Path(file.filename).suffix
@@ -55,9 +58,12 @@ class UploadService:
         with file_path.open("wb") as buffer:
             copyfileobj(file.file, buffer)
 
+        absolute_file_path = file_path.resolve()
+
         logger.info(
-            "File saved path=%s",
-            file_path,
+            "File saved path=%s exists=%s",
+            absolute_file_path,
+            absolute_file_path.exists(),
         )
 
         upload = PricingUpload(
@@ -71,6 +77,7 @@ class UploadService:
         background_tasks.add_task(
             CSVProcessor.process_upload,
             upload.id,
+            str(absolute_file_path),
         )
 
         logger.info(

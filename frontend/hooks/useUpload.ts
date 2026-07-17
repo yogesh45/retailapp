@@ -52,16 +52,6 @@ export default function useUpload({
     }
   }, []);
 
-  const hideStatusAfterDelay = useCallback(() => {
-    clearHideTimer();
-
-    hideTimerRef.current = setTimeout(() => {
-      setUploadStatus(null);
-      setError("");
-      hideTimerRef.current = null;
-    }, 5000);
-  }, [clearHideTimer]);
-
   const checkStatus = useCallback(
     async (uploadId: number) => {
       try {
@@ -95,8 +85,6 @@ export default function useUpload({
           }
 
           await onCompleted?.();
-
-          hideStatusAfterDelay();
           return;
         }
 
@@ -110,8 +98,6 @@ export default function useUpload({
 
           setError(message);
           toast.error(message);
-
-          hideStatusAfterDelay();
         }
       } catch (requestError) {
         stopPolling();
@@ -124,12 +110,9 @@ export default function useUpload({
 
         setError(message);
         toast.error(message);
-
-        hideStatusAfterDelay();
       }
     },
     [
-      hideStatusAfterDelay,
       onCompleted,
       stopPolling,
     ]

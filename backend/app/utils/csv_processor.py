@@ -25,7 +25,10 @@ REQUIRED_COLUMNS = {
 
 class CSVProcessor:
     @staticmethod
-    def process_upload(upload_id: int) -> None:
+    def process_upload(
+        upload_id: int,
+        file_path: str,
+    ) -> None:
         db = SessionLocal()
 
         try:
@@ -41,11 +44,18 @@ class CSVProcessor:
                 )
                 return
 
-            file_path = Path("uploads") / upload.file_name
+            resolved_file_path = Path(file_path).resolve()
 
-            if not file_path.exists():
+            logger.info(
+                "CSV file lookup upload_id=%s path=%s exists=%s",
+                upload_id,
+                resolved_file_path,
+                resolved_file_path.exists(),
+            )
+
+            if not resolved_file_path.exists():
                 raise FileNotFoundError(
-                    f"Uploaded file does not exist: {file_path}"
+                    f"Uploaded file does not exist: {resolved_file_path}"
                 )
 
             logger.info(
@@ -59,12 +69,12 @@ class CSVProcessor:
             db.commit()
 
             CSVReader.validate_headers(
-                file_path=str(file_path),
+                file_path=str(resolved_file_path),
                 required_columns=REQUIRED_COLUMNS,
             )
 
             upload.total_rows = CSVReader.count_rows(
-                str(file_path)
+                str(resolved_file_path)
             )
             db.commit()
 
@@ -73,7 +83,7 @@ class CSVProcessor:
             failed_rows = 0
 
             for batch in CSVReader.read_in_batches(
-                file_path=str(file_path),
+                file_path=str(resolved_file_path),
                 batch_size=BATCH_SIZE,
             ):
                 for row in batch:
