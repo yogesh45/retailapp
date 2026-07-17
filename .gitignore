@@ -1,0 +1,25 @@
+cat > .gitignore <<'EOF'
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.pytest_cache/
+
+# Backend environment and runtime files
+backend/.env
+backend/logs/
+backend/uploads/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# IDE
+.vscode/
+.idea/
+EOF
