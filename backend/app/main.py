@@ -12,6 +12,11 @@ from app.core.logging import configure_logging
 
 app_settings = get_settings()
 
+origins = [
+    origin.strip()
+    for origin in app_settings.cors_origins.split(",")
+]
+
 
 app = FastAPI(
     title=app_settings.app_name,
@@ -20,9 +25,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-    ],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

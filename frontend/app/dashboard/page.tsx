@@ -114,6 +114,10 @@ export default function DashboardPage() {
                 onEdit={handleEdit}
                 onPageChange={changePage}
                 />
+                <EditPriceDialog open={editOpen} pricing={selectedPricing} 
+                onClose={() => setEditOpen(false)}
+                onSave={handleSave}
+                />
             </section>
         </main>
     );

@@ -12,11 +12,16 @@ from app.models.user import User
 from app.repositories.upload_repository import UploadRepository
 from app.schemas.upload import UploadResponse, UploadStatusResponse
 from app.utils.csv_processor import CSVProcessor
+from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
+app_settings = get_settings()
+
 
 class UploadService:
+
+
 
     def __init__(self, db: Session):
         self.repository = UploadRepository(db)
@@ -35,7 +40,9 @@ class UploadService:
         )
 
         # Create uploads directory if it doesn't exist
-        upload_directory = Path("uploads")
+        upload_directory = Path(
+            app_settings.upload_directory
+        )
         upload_directory.mkdir(exist_ok=True)
 
         # Generate unique filename
