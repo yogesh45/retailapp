@@ -37,9 +37,8 @@ def login(
 
     if user is None:
         logger.info(
-            "Login successful user_id=%s role=%s",
-            user.id,
-            user.role.value,
+            "Login Attempt Failed email=%s reason=invalid_credentials",
+            login_data.email
         )
         return HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
